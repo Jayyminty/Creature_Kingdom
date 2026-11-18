@@ -67,6 +67,32 @@ class SwimmingCreature(Creature):
         if target.hp < 0:
             target.hp = 0
         print(f"{target.name} HP is now {target.hp}")
+# ===============================
+# FireCreature Branch
+# ===============================
+
+class FireCreature(Creature):
+    def __init__(self, name, hp, attack_power):
+        super().__init__(name, hp, attack_power)
+        self.fire_level = 0
+
+    def emit_fire(self, new_fire_level):
+        self.fire_level = max(0, min(100, new_fire_level))
+        print(f"{self.name} emits fire at level {self.fire_level}.")
+
+    def attack(self, target):
+        if not self.is_alive():
+            print(f"{self.name} cannot attack because it is defeated.")
+            return
+
+        fire_bonus = self.fire_level // 10
+        damage = self.attack_power + fire_bonus
+        print(f"{self.name} breathes fire at {target.name} (fire level {self.fire_level})!")
+        print(f"It burns {target.name} for {damage} damage! (base {self.attack_power} + fire bonus {fire_bonus})")
+        target.hp -= damage
+        if target.hp < 0:
+            target.hp = 0
+        print(f"{target.name} HP is now {target.hp}")
 
 if __name__ == "__main__":
     print("=== Creature Class Tests ===\n")
@@ -140,5 +166,26 @@ if __name__ == "__main__":
     dummy = Creature("Practice Dummy", 40, 0)
     serpent.attack(dummy)
     print(f"Dummy HP should be 33 → Actual: {dummy.hp}")
+    print()
+    print("=== Tests Completed ===")
+
+    print()
+    print("=== FireCreature Tests ===\n")
+    drake = FireCreature("Fire Drake", 70, 9)
+    drake.emit_fire(50)
+    print(f"Fire level should be 50 → Actual: {drake.fire_level}")
+
+    dummy = Creature("Practice Dummy", 40, 0)
+    drake.attack(dummy)
+    print(f"Dummy HP should be 26 → Actual: {dummy.hp}")
+
+    drake.emit_fire(150)
+    print(f"Fire level should be capped at 100 → Actual: {drake.fire_level}")
+    drake.emit_fire(-20)
+    print(f"Fire level should not go below 0 → Actual: {drake.fire_level}")
+
+    drake.hp = 0
+    drake.attack(dummy)
+    print(f"Dummy HP should remain 26 → Actual: {dummy.hp}")
     print()
     print("=== Tests Completed ===")
